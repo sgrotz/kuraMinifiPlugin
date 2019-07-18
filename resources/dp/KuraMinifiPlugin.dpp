@@ -1,9 +1,9 @@
 #Deployment Plugin Project File
-#Thu Jul 18 22:06:18 CEST 2019
+#Thu Jul 18 23:15:32 CEST 2019
 build.ant.name=<.>/resources/dp/KuraMinifiPlugin_build.xml
 build.dp.file=<.>/resources/dp/KuraMinifiPlugin.dp
 build.location=
-bundles.0.bundle_path=/Users/stephan/eclipse-workspace/plugins/org.sg.kura.minifiPlugin_1.0.3.jar
+bundles.0.bundle_path=<.>/resources/plugins/org.sg.kura.minifiPlugin_1.0.3.jar
 bundles.0.customizer=false
 bundles.0.headers.count=0
 bundles.0.missing=false
