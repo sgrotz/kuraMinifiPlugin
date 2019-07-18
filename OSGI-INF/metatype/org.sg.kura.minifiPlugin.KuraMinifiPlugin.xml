@@ -4,13 +4,23 @@
         name="Minifi / Nifi Plugin"
         description="This plugin contains all the configuration for a local minifi agent, which can connect to the remote Nifi instances">
 
-<AD id="binaryURL"
-            name="binaryURL"
+
+        <AD id="autostart"
+            name="Auto Start Server"
+            description="Select if you want to automatically start the minifi server upon loading the module"
+            type="Boolean"
+            cardinality="1"
+            required="true"
+            default="false"
+            />
+            
+		<AD id="binaryURL"
+            name="URL to download binaries"
             type="String"
             cardinality="0"
             required="true"
             default='http://mirror.funkfreundelandshut.de/apache/nifi/minifi/0.5.0/minifi-0.5.0-bin.tar.gz'
-            description="Paste the URL, where to download the minifi binaries from - MAKE SURE IT IS THE BINARY.tar.gz file for example: http://mirror.funkfreundelandshut.de/apache/nifi/minifi/0.5.0/minifi-0.5.0-bin.tar.gz|Text"/>
+            description="Paste the URL, where to download the minifi binaries from - make sure it is the BINARY.tar.gz file|Text"/>
 
 
         <AD id="bootstrapConf"
@@ -21,7 +31,7 @@
             default=''
             description="Paste your bootstrap configuration file here - leave empty if not required|TextArea"/>
 
-<AD id="configYml"
+		<AD id="configYml"
             name="configYml"
             type="String"
             cardinality="1"
@@ -29,7 +39,7 @@
             default=''
             description="Paste your config.yml configuration file here - leave empty if not required|TextArea"/>
 
-<AD id="logbackXML"
+		<AD id="logbackXML"
             name="logbackXML"
             type="String"
             cardinality="0"
