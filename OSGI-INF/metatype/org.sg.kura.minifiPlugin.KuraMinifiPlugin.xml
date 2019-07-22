@@ -28,6 +28,7 @@
             type="String"
             cardinality="0"
             required="false"
+            max="2147483647"
             default=''
             description="Paste your bootstrap configuration file here - leave empty if not required|TextArea"/>
 
@@ -36,6 +37,7 @@
             type="String"
             cardinality="1"
             required="false"
+			max="2147483647"            
             default=''
             description="Paste your config.yml configuration file here - leave empty if not required|TextArea"/>
 
@@ -43,6 +45,7 @@
             name="logbackXML"
             type="String"
             cardinality="0"
+            max="2147483647"
             required="false"
             default=''
             description="Paste your logback.xml configuration file here - leave empty if not required|TextArea"/>
