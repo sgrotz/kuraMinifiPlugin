@@ -25,10 +25,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -96,32 +98,6 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 
 	}
 
-	private boolean installServerComponents() {
-		boolean success = false;
-
-		if(properties != null && !properties.isEmpty() && properties.containsKey("binaryURL")) {
-			// First lets clean up the base directory
-			this.cleanupBaseDir(INSTALL_DIR);
-
-			// Where to get the binaries from
-			String binaryURL = properties.get("binaryURL").toString();
-
-			// Then lets download the binary files
-			//this.downloadBinaryFile("http://192.168.77.32/minifi-0.6.0.1.0.0.0-54-bin.tar.gz", WORKING_DIR + "/minifi.tar.gz");
-			this.downloadBinaryFile(binaryURL, WORKING_DIR + SEPARATOR + INSTALL_FILE_NAME);
-
-			// Decompress the binary files
-			String COMPRESSED_FILE = WORKING_DIR + SEPARATOR + INSTALL_FILE_NAME;
-			String DESTINATION_PATH = INSTALL_DIR;
-			unTarFile(COMPRESSED_FILE, DESTINATION_PATH);
-
-			// Make sure to write the binary URL to the local configuration file.	
-			setLocalConfig(binaryURL);
-		}
-
-		return success;
-	}
-
 	protected void activate(ComponentContext componentContext, Map<String, Object> properties) {
 		logger.info("Bundle " + APP_ID + " has started with config!");
 		updated(properties);
@@ -167,6 +143,32 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 			this.startServer();
 
 		}
+	}
+
+	private boolean installServerComponents() {
+		boolean success = false;
+	
+		if(properties != null && !properties.isEmpty() && properties.containsKey("binaryURL")) {
+			// First lets clean up the base directory
+			this.cleanupBaseDir(INSTALL_DIR);
+	
+			// Where to get the binaries from
+			String binaryURL = properties.get("binaryURL").toString();
+	
+			// Then lets download the binary files
+			//this.downloadBinaryFile("http://192.168.77.32/minifi-0.6.0.1.0.0.0-54-bin.tar.gz", WORKING_DIR + "/minifi.tar.gz");
+			this.downloadBinaryFile(binaryURL, WORKING_DIR + SEPARATOR + INSTALL_FILE_NAME);
+	
+			// Decompress the binary files
+			String COMPRESSED_FILE = WORKING_DIR + SEPARATOR + INSTALL_FILE_NAME;
+			String DESTINATION_PATH = INSTALL_DIR;
+			unTarFile(COMPRESSED_FILE, DESTINATION_PATH);
+				
+			// Make sure to write the binary URL to the local configuration file.	
+			setLocalConfig(binaryURL);
+		}
+	
+		return success;
 	}
 
 	private void overwriteConfigurationFile(Entry<String, Object> entry, String path) {
@@ -318,15 +320,16 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 				}else {
 					// In case entry is for file ensure parent directory is in place
 					// and write file content to Output Stream
-					String base_dir = tarEntry.getName().split("/")[0] + File.separator;
+					String base_dir = tarEntry.getName().split(File.separator)[0] + File.separator;
 					String targetDirectory = tarEntry.getName().replaceFirst(base_dir, "");
 					File outputFile = new File(destFile + File.separator + targetDirectory);
 
-					outputFile.getParentFile().mkdirs();    
-					IOUtils.copy(tis, new FileOutputStream(outputFile));
+					outputFile.getParentFile().mkdirs(); 
+					IOUtils.copy(tis, new OutputStreamWriter(new FileOutputStream(outputFile)), StandardCharsets.US_ASCII);
 
 					if (FilenameUtils.getExtension(tarEntry.getName()).equals("sh")) {
 						outputFile.setExecutable(true);
+					
 					}
 
 				}
@@ -366,7 +369,7 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 			if (!isServerRunning() && autoStart) {
 				logger.info("Initiating minifi server startup sequence - " + APP_ID + " ...");
 				logger.info("Nifi/Minifi log files can be found here: " + LOG_DIR);
-				runCommand(BIN_DIR + "minifi.sh start");
+				//runCommand(BIN_DIR + "minifi.sh start");
 			} else {
 				logger.info("Minifi is already running - will ignore ... ");
 			}
