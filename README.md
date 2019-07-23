@@ -22,8 +22,12 @@ The plugin works by downloading and installing additional binaries from a remote
 
 # Compatibility
 The plugin was tested with the following versions: 
-Kura | Kapua | Minifi
-4.1.0 | 1.0 | 0.5, 0.6 (CEM Edition)
+
+| Component | Version |
+| --- | --- |
+| Eclipse Kura | 4.0.0, 4.1.0 |
+| Eclipse Kapua | 1.0 |
+| Minifi / Nifi |  0.5, 0.6 (CEM Edition) |
 
 
 # Installation
