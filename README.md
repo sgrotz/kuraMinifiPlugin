@@ -57,3 +57,6 @@ The plugin offers the following configuration properties:
 # Starting/Stopping the plugin
 After installing the plugin, you should be able to browse the configuration of the plugin directly from within Kura (web-frontend should have a new entry in the service list in the left-hand menu) or from within the server side command central Kapua. 
 You can start or stop the bundle by accessing the "Bundles" - you should see an entry "org.sg.kura.minifiPlugin" in the list of bundles. Click on the bundle and use the command buttons to stop or start the bundle. This will activate or deactivate the kura components. 
+
+# Tips & Tricks
+* If you want to force the server to reinstall the minifi-binaries, just delete the "binaryURL.txt" file from the Eclipse-Kura root directory (in my case /opt/eclipse/kura_4.1.0_raspberry-pi-2). 
