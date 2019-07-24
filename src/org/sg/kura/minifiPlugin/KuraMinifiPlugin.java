@@ -370,7 +370,7 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 			if (!isServerRunning() && autoStart) {
 				logger.info("Initiating minifi server startup sequence - " + APP_ID + " ...");
 				logger.info("Nifi/Minifi log files can be found here: " + LOG_DIR);
-				//runCommand(BIN_DIR + "minifi.sh start");
+				runCommand(BIN_DIR + "minifi.sh start");
 			} else {
 				logger.info("Minifi is already running - will ignore ... ");
 			}
