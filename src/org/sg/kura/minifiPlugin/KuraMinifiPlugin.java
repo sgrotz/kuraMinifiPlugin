@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.utils.CharsetNames;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -325,7 +326,7 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 					File outputFile = new File(destFile + File.separator + targetDirectory);
 
 					outputFile.getParentFile().mkdirs(); 
-					IOUtils.copy(tis, new OutputStreamWriter(new FileOutputStream(outputFile)), StandardCharsets.US_ASCII);
+					IOUtils.copy(tis, new FileOutputStream(outputFile));
 
 					if (FilenameUtils.getExtension(tarEntry.getName()).equals("sh")) {
 						outputFile.setExecutable(true);
