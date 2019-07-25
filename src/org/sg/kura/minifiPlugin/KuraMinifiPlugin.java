@@ -32,6 +32,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
@@ -48,6 +49,8 @@ import org.apache.commons.compress.utils.CharsetNames;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.eclipse.kura.configuration.ConfigurableComponent;
 
 public class KuraMinifiPlugin implements ConfigurableComponent {
@@ -107,7 +110,12 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 	protected void deactivate(ComponentContext componentContext) {
 		logger.info("Bundle " + APP_ID + " has stopped!");
 
+		// Stop the server instance
 		this.stopServer();
+		
+		// Remove all local content - we dont know if the plugin was uninstalled or just stopped.
+		// this.cleanupBaseDir(INSTALL_DIR);
+
 	}
 
 	public void updated(Map<String, Object> properties) {
@@ -164,9 +172,32 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 			String COMPRESSED_FILE = WORKING_DIR + SEPARATOR + INSTALL_FILE_NAME;
 			String DESTINATION_PATH = INSTALL_DIR;
 			unTarFile(COMPRESSED_FILE, DESTINATION_PATH);
-				
+			
 			// Make sure to write the binary URL to the local configuration file.	
 			setLocalConfig(binaryURL);
+		}
+	
+		return success;
+	}
+
+	private boolean cleanupBaseDir(String baseDir) {
+		boolean success = false; 
+	
+		try {
+	
+			logger.debug("Deleting directory: " + baseDir);
+			FileUtils.deleteDirectory(new File(baseDir));
+			
+			logger.debug("Deleting downloaded artefacts: " + WORKING_DIR + SEPARATOR + INSTALL_FILE_NAME);
+			FileUtils.deleteQuietly(new File(WORKING_DIR + SEPARATOR + INSTALL_FILE_NAME));
+			
+			logger.debug("Deleting downloaded artefacts: " + LOCAL_CONFIG_FILE);
+			FileUtils.deleteQuietly(new File(LOCAL_CONFIG_FILE));
+	
+			success = true; 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	
 		return success;
@@ -284,24 +315,6 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 		return success;
 	}
 
-	private boolean cleanupBaseDir(String baseDir) {
-		boolean success = false; 
-
-		try {
-
-			FileUtils.deleteDirectory(new File(baseDir));
-			logger.debug("Deleting directory: " + baseDir);
-
-			success = true; 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return success;
-	}
-
-
 	private boolean unTarFile(String tarFile, String DESTINATION_PATH ) {
 		boolean success = false;
 		TarArchiveInputStream tis = null;
@@ -330,7 +343,7 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 
 					if (FilenameUtils.getExtension(tarEntry.getName()).equals("sh")) {
 						outputFile.setExecutable(true);
-					
+						this.dos2unix(DESTINATION_PATH + SEPARATOR + targetDirectory);
 					}
 
 				}
@@ -412,12 +425,32 @@ public class KuraMinifiPlugin implements ConfigurableComponent {
 				ret = output.toString();
 			} else {
 				logger.error("Command " + command + " returned a non-0 exit code. Not good :(");
+				logger.error(output.toString());
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return ret;
+	}
+	
+	private void dos2unix(String fileToConvert) {
+		
+		File file = new File(fileToConvert);
+	    try {
+	    	logger.info("Removing special characters from shell script: " + fileToConvert + " ...");
+			String data = FileUtils.readFileToString(file, "UTF-8");
+			
+			String unixText = data.replaceAll("\r\n", "\n");
+			
+			FileUtils.writeStringToFile(file, unixText);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		
 	}
 
 }
